@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:14
+    container_name: postgresDB
+    environment:
+      POSTGRES_USER: zaber
+      POSTGRES_PASSWORD: zaber47
+      POSTGRES_DB: scrapy
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:  
+      test: ["CMD-SHELL", "pg_isready -U zaber"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+
+  scraper:
+    build: .
+    container_name: scraper
+    volumes:
+      - .:/usr/src/app
+      - ./hotelsImage:/usr/src/app/hotelsImage
+    working_dir: /usr/src/app
+    depends_on:
+      postgres:
+        condition: service_healthy  
+    networks:
+      - app_network
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://zaber:zaber47@postgres:5432/scrapy
+    ports:
+      - "8000:8000"
+    command: ["scrapy", "crawl", "scrapTip"]
+
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=zaber@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=zaber4747
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    restart: unless-stopped
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  app_network:
+    driver: bridge
