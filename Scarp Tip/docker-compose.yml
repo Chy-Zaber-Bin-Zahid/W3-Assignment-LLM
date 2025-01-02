@@ -34,7 +34,7 @@ services:
     environment:
       - DATABASE_URL=postgresql+psycopg2://zaber:zaber47@postgres:5432/scrapy
     ports:
-      - "8000:8000"
+      - "8001:8001"
     command: ["scrapy", "crawl", "scrapTip"]
 
 
@@ -52,10 +52,20 @@ services:
     networks:
       - app_network
 
+  # portainer:
+  #   image: portainer/portainer-ce:latest
+  #   ports:
+  #     - "9443:9443"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - ./portainer-data:/data
+  #   restart: unless-stopped
+
+
 volumes:
   postgres_data:
   pgadmin_data:
-
+  data:
 networks:
   app_network:
     driver: bridge

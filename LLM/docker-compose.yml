@@ -1,0 +1,30 @@
+# docker-compose.yml
+services:
+  django:
+    build: .
+    container_name: django
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_NAME=scrapy
+      - DB_USER=zaber
+      - DB_PASSWORD=zaber47
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - API_KEY=${API_KEY}
+    networks:
+      - scarptip_app_network
+    working_dir: /app
+    command: >
+      sh -c "
+        python manage.py migrate &&
+        python manage.py runserver 0.0.0.0:8000
+      "
+
+networks:
+  scarptip_app_network:
+    external: true

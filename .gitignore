@@ -1,3 +1,5 @@
 env/
 hotelsImage/
 __pycache__/
+.env
+portainer-data/
